@@ -1,0 +1,9 @@
+ReadVersionNum:6.991
+SimName:Kakahaia\kakahaia_dem.txt
+Descrip:
+GISEachYear:True
+GISYears:2100
+ExecuteImmediately:False
+ROS_Resize:False
+RescaleMap:1
+CheckSum:6.991

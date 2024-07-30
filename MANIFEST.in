@@ -1,0 +1,4 @@
+include README.md
+include *.py
+recursive-include Kakahaia *
+recursive-include docs *

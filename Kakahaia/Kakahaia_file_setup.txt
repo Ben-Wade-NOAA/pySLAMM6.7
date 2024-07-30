@@ -1,0 +1,16 @@
+BatchFileN:
+ElevFileN:kakahaia_dem.SLB
+NWIFileN:kakahaia_nwi.ASC
+OutputFileN:kakahaia_test
+SLPFileN:kakahaia_slope.txt
+IMPFileN:kakahaia_imp.txt
+ROSFileN:
+DikFileN:
+StormFileN:
+VDFileN:
+UpliftFileN:
+SalFileN:
+RoadFileN:
+D2MFileN:
+OptimizeLevel:0
+NumMMEntries:17066

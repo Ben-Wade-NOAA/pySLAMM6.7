@@ -1,0 +1,9 @@
+NumDists:0
+Seed:20
+Iterations:20
+GIS_Start_Num:1
+UseSeed:True
+UseSEGTSlope:True
+SEGTSlope:0.6596
+NumSens:0
+PctToVary:15
