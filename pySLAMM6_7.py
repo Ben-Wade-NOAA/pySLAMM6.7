@@ -54,7 +54,7 @@ ptypes = parm_types[1::2]      # Take every second element starting from index 1
 
 class SimulationShell:
     def __init__(self):
-        self.simulation: TSLAMM_Simulation
+        self.simulation: TSLAMM_Simulation = None
         self.running = True
         self.setup_signal_handler()
 
