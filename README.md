@@ -1,5 +1,5 @@
-pPySLAMM 6.7 Installation and Test Instructions
-7/30/2024--  initial release instructions
+PySLAMM 6.7 Installation and Test Instructions
+8/13/2024--  initial release instructions
 
 Linux 
 
@@ -30,9 +30,7 @@ Linux
     5. navigate to the installation location to run the command line
         
         python3.11 pySLAMM6_7.py
-
     
-
 
 Windows
 
@@ -47,12 +45,10 @@ Windows
     OR 
         pip3 install pyslamm-6.7.0.tar.gz
         
-    4. navigate to the Kakahaia directory to run the test
+    4. navigate to the location of pySLAMM6_7.py to run the command line
+
+        e.g. cd test_env\Lib\site-packages\
     
-    CD C:\Users\{username}\AppData\Local\Programs\Python\Python311\test_env\Kakahaia
-    python C:\{Path to Basic_Run}\Basic_Run.py Kakahaia.txt
-        
-    (This is just a test deployment the final deployment will have the user run python, import 
-    the SLAMM library, and run commands from a python prompt)
+        python pySLAMM6_7.py
         
 Please send any questions to jclough@warrenpinnacle.com

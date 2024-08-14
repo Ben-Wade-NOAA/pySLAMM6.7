@@ -1,0 +1,6 @@
+.idea/
+Backups/
+__pycache__/
+build/
+pySLAMM.egg-info/
+worddocs/

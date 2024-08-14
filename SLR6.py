@@ -83,7 +83,7 @@ class SharedData:  # shared data datastructure that is used by threads or main p
     def initialize_erode_matrix(self, shape, dtype=np.uint16):
         self.erode_matrix = SharedMemoryArray(shape, dtype)
 
-    def initialize_map_matrix(self, shape, dtype=np.uint32):
+    def initialize_map_matrix(self, shape, dtype=np.int32):
         self.map_matrix = SharedMemoryArray(shape, dtype)
 
     def initialize_data_elev(self, shape, dtype=np.uint16):
@@ -327,6 +327,8 @@ class TSLAMM_Simulation:  # primary slamm simulation object
     n_time_steps: int = 1
     scen_iter: int = 0
     run_time: str = ""
+    start_time: float = None
+    memory_load_time: float = None
     cell_ha: float = 0.0
     hectares: float = 0.0
     year: int = 0
@@ -408,7 +410,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
         # self.shared_data.map: List[SharedMemoryArray] = []  # will be type compressed_cell_dtype
         # self.b_matrix: Optional[np.ndarray] = None  # will be type np.uint8
         # self.erode_matrix: Optional[np.ndarray] = None  # will be type np.uint16
-        # self.shared_data.map_matrix: Optional[np.ndarray] = None  # will be type np.uint32
+        # self.shared_data.map_matrix: Optional[np.ndarray] = None  # will be type np.int32
         # self.data_elev: Optional[np.ndarray] = None  # will be type np.uint16
         # self.max_fetch_arr: Optional[np.ndarray] = None  # will be type np.uint16
         # self.ros_array: Optional[np.ndarray] = None  # will be type np.uint8
@@ -1323,6 +1325,9 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                         try:
                             run_record_file = open(self.run_record_file_name, "a")
                             run_record_file.write(sl_label + " appended to Master CSV: " + file_name + "\n")
+                            run_time = round((time.time()-self.start_time)/60, 1)
+                            run_record_file.write(f"--  run completed in {run_time} minutes.")
+
                             run_record_file.close()
                         except Exception as ex:
                             print(f"Error appending to Run-Record File {self.run_record_file_name}: {ex}")
@@ -1742,7 +1747,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
         # If either CountOnly, DikOnly, or SalOnly is false
         if not (count_only or dik_only or sal_only):
             if self.shared_data.map_matrix is None or self.shared_data.map_matrix.array.size < self.site.rows * self.site.cols:
-                self.shared_data.initialize_map_matrix((self.site.rows, self.site.cols), dtype=np.uint32)
+                self.shared_data.initialize_map_matrix((self.site.rows, self.site.cols), dtype=np.int32)
 
             if (large_raster_edit or (USE_DATAELEV and (self.optimize_level > 1))) and (
                     self.shared_data.data_elev is None or self.shared_data.data_elev.array.size < self.site.rows * self.site.cols):
@@ -1966,11 +1971,20 @@ class TSLAMM_Simulation:  # primary slamm simulation object
         #     self.n_time_steps = 1
 
         if self.run_specific_years:
-            self.n_time_steps = 3 + self.years_string.count(
-                ',')  # TimeIter = InitCond + T0 + 1 + number of commas in comma delimited string
+            self.n_time_steps = 3 + self.years_string.count(',')  # TimeIter = InitCond + T0 + 1 + number of commas in comma delimited string
         else:
-            self.n_time_steps = 1 + (
-                    (self.max_year - self.site.t0()) // self.time_step) + 2  # initCond + T0 + other steps
+            t0step = self.site.t0() + self.time_step
+            firstyear = max(t0step, 2025)
+
+            if self.time_step < 25 and t0step < 2020:
+                firstyear = 2020
+            if self.time_step < 15 and t0step < 2010:
+                firstyear = 2010
+
+            steps = (self.max_year - firstyear) // self.time_step + 1
+            if firstyear + (steps - 1) * self.time_step < self.max_year:  # add max_year, smaller time step if required
+                steps += 1
+            self.n_time_steps = steps + 2  # other steps + initCond + T0
 
         # Initialize road variables and potentially overwrite elevations
         for road_info in self.roads_inf:
@@ -4224,8 +4238,15 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                     file_format = FileFormat.ASCII
                 if self.output_year(self.year):
                     result = self.save_gis_files(file_format)
-            # if not result:
-            #     return False
+
+            first_step_time = round((time.time()-self.start_time)/60, 1)-self.memory_load_time
+            steps_run = self.n_time_steps - 1  # exclude initial condition data slot
+            print(f'          Loading data to memory and initialization took {self.memory_load_time} minutes')
+            print(f'          First step took {first_step_time} minutes')
+            estimated_time = round(first_step_time * steps_run, 1) + self.memory_load_time
+            print(f'          This simulation with {steps_run} steps is estimated to take a total of {estimated_time} minutes')
+            remaining_time = round(estimated_time - self.memory_load_time - first_step_time, 1)
+            print(f'          (an additional {remaining_time} minutes')
 
             return result
 
@@ -4262,6 +4283,8 @@ class TSLAMM_Simulation:  # primary slamm simulation object
 
         # -----------------------------------------------------------------------------------------------------
         def execute_slamm(prot_scen, ipcc_scen, ipcc_estm, fix_num, tsslri):
+
+            self.start_time = time.time()
 
             save_subsites()
             self.dike_log_init = False
@@ -4382,6 +4405,8 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             self.fixed_scen = fix_num
             self.ipcc_sl_rate = ipcc_scen
             self.ipcc_sl_est = ipcc_estm
+
+            self.memory_load_time = round((time.time()-self.start_time)/60,1)
 
             # if self.running_fixed:
             #     self.prog_form.slr_label.caption = self.label_fixed[fix_num]
@@ -5056,3 +5081,28 @@ class TSLAMM_Simulation:  # primary slamm simulation object
     
         return True
 
+    def count_runs(self):
+
+        count_runs = 0
+        for ipcc_scenario in IPCCScenarios:
+            for ipcc_est in IPCCEstimates:
+                for prot_scenario in ProtectScenario:
+                    if (self.ipcc_scenarios[ipcc_scenario] and self.prot_to_run[prot_scenario] and
+                            self.ipcc_estimates[ipcc_est]):
+                        count_runs += 1
+
+        for prot_scenario in ProtectScenario:
+            for fix_loop in range(11):
+                if self.fixed_scenarios[fix_loop] and self.prot_to_run[prot_scenario]:
+                    count_runs += 1
+
+        running_custom_slr = False
+        if self.run_custom_slr:
+            for i in range(self.n_custom_slr):
+                self.current_custom_slr = self.custom_slr_array[i]
+                for prot_scenario in ProtectScenario:
+                    if self.prot_to_run[prot_scenario]:
+                        count_runs += 1
+                        running_custom_slr = True
+
+        return count_runs, running_custom_slr

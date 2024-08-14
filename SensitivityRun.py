@@ -270,27 +270,7 @@ def sens_run(ss: TSLAMM_Simulation):
 # Function to verify the setup for sensitivity runs
 def verify_setup(ss: TSLAMM_Simulation) -> bool:
 
-    count_runs = 0
-    err_message = ''
-    for ipcc_scenario in IPCCScenarios:
-        for ipcc_est in IPCCEstimates:
-            for prot_scenario in ProtectScenario:
-                if ss.ipcc_scenarios[ipcc_scenario] and ss.prot_to_run[prot_scenario] and ss.ipcc_estimates[ipcc_est]:
-                    count_runs += 1
-
-    for prot_scenario in ProtectScenario:
-        for fix_loop in range(11):
-            if ss.fixed_scenarios[fix_loop] and ss.prot_to_run[prot_scenario]:
-                count_runs += 1
-
-    running_custom_slr = False
-    if ss.run_custom_slr:
-        for i in range(ss.n_custom_slr):
-            ss.current_custom_slr = ss.custom_slr_array[i]
-            for prot_scenario in ProtectScenario:
-                if ss.prot_to_run[prot_scenario]:
-                    count_runs += 1
-                    running_custom_slr = True
+    count_runs, running_custom_slr = ss.count_runs()
 
     if count_runs != 1:
         err_message = 'Sensitivity runs must be set up to run one SLR scenario / Protection Scenario only.'

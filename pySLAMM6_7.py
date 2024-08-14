@@ -54,7 +54,7 @@ ptypes = parm_types[1::2]      # Take every second element starting from index 1
 
 class SimulationShell:
     def __init__(self):
-        self.simulation: TSLAMM_Simulation = None
+        self.simulation: TSLAMM_Simulation
         self.running = True
         self.setup_signal_handler()
 
@@ -249,7 +249,7 @@ class SimulationShell:
         except Exception as e:
             print(f'Failed to run model: {e}')
 
-    def run(self):  #run the command line shell itself
+    def run(self):  # run the command line shell itself
         print('type ? for a command list')
         while self.running:
             try:
@@ -268,7 +268,7 @@ class SimulationShell:
             return
         cmd = parts[0].lower()
         args = parts[1:]
-        cmdlist = "    load {file name}\n\r    save {split_files(blank=False)}\n\r    saveas {file name, split_files(blank=False)} " \
+        cmdlist = "    new\n\r    load {file name}\n\r    save {split_files(blank=False)}\n\r    saveas {file name, split_files(blank=False)} " \
                   "\n\r    set {parameter} {value}\n\r    show {parameter or all}\n\r    run_model {cpu_count(blank=all)} \n\r    quit"
 
         if cmd == 'load':
@@ -312,6 +312,7 @@ class SimulationShell:
             print(cmdlist)
         else:
             print("Unknown command, type ? for a command list")
+
 
 if __name__ == '__main__':
     shell = SimulationShell()

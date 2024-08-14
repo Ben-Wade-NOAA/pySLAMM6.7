@@ -12,7 +12,6 @@ def main():
 
     file_path = sys.argv[1]
 
-    start = time.time()
     # Create an instance of TSLAMM_Simulation
     simulation = TSLAMM_Simulation()
 
@@ -30,9 +29,7 @@ def main():
 
     simulation.dispose_mem()
 
-    end = time.time()
-    elapsed = round(end - start)
-    print(f"Elapsed = {elapsed} seconds")
+
 
 
 if __name__ == "__main__":
