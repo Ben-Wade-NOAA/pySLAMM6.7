@@ -304,13 +304,36 @@ class TCategories:
             'Riverine Tidal', 'Estuarine Open Water', 'Tidal Creek', 'Open Ocean', 'Irreg.-Flooded Marsh',
             'Inland Shore', 'Tidal Swamp', 'Flooded Developed Dry Land', 'Flooded Forest'
         ]
-        gis_nums = [i + 1 for i in range(24)]
+        gis_nums = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+            11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  # skip 21
+            22, 23, 25, 26]  # skip 24
+
         default_colors = [
-            0x002D0398, 0x00002BD5, 0x008000, 0x005500, 0x00FF00,
-            0x00A4FFA4, 0x808000, 0x00A6A600, 0x800080, 0x00B3FFFF,
-            0xC0C0C0, 0xFFFF00, 0x000059B3, 0xFF80FF, 0xFFA8A8,
-            0x0000FF, 0x0000FF, 0x0000FF, 0x000080, 0x004080FF,
-            0x00004080, 0x00003E00, 0x00FF64B1, 0x0075D6FF
+            0x002D0398,  # ClMaroon (DevDryland)
+            0x00002BD5,  # ClMaroon (UndDryland)
+            0x00008000,  # ClGreen (Swamp)
+            0x00005500,  # CypressSwamp (Darker Green)
+            0x0000FF00,  # ClLime (InlandFreshMarsh)
+            0x00A4FFA4,  # TidalFreshMarsh (Lighter Green)
+            0x00808000,  # ClOlive (TransitionSaltmarsh) (Lighter Teal)
+            0x00A6A600,  # Regularly flooded Saltmarsh
+            0x00800080,  # ClPurple (Mangrove)
+            0x00B3FFFF,  # EstuarineBeach
+            0x00C0C0C0,  # ClSilver (TidalFlat)
+            0x00FFFF00,  # ClYellow (OceanBeach) (Lighter Yellow)
+            0x000059B3,  # OceanFlat (Light Brown)
+            0x00FF80FF,  # RockyIntertidal (Pink)
+            0x00FFA8A8,  # InlandOpenWater (Light Blue)
+            0x00FF0000,  # ClBlue (RiverineTidalOpenWater)
+            0x00FF0000,  # ClBlue (EstuarineWater)
+            0x00FF0000,  # ClBlue (TidalCreek)
+            0x00800000,  # ClNavy (OpenOcean)
+            0x004080FF,  # Irregularly Flooded Brackish Marsh (Orange)
+            0x00004080,  # Inland Shore (Brown)
+            0x00003E00,  # Tidal Swamp (Very Dark Green, almost Black)
+            0x00FF64B1,  # Flood Dev Dry Land (Purple)
+            0x0075D6FF
         ]
 
         self.clear_cats()
@@ -359,6 +382,7 @@ class TCategories:
                 self.cats[i].use_wave_erosion = True
 
             # Accretion Models
+            self.cats[i].accr_model = AccrModels.AccrNone
             if i == 7:
                 self.cats[i].accr_model = AccrModels.RegFM
             if i in [6, 19]:
@@ -376,6 +400,7 @@ class TCategories:
             if i in [2, 3]:
                 self.cats[i].accr_model = AccrModels.Swamp
 
+            self.cats[i].erode_model = ErosionInputs.ENone
             # Erosion Models
             if i in [5, 6, 7, 19]:
                 self.cats[i].erode_model = ErosionInputs.EMarsh
@@ -452,6 +477,11 @@ class TCategories:
                 cat.elev_dat.min_elev = 0
                 cat.elev_dat.max_unit = ElevUnit.HalfTide
                 cat.elev_dat.max_elev = 1.2
+            if i == 8:  # Mangrove
+                cat.elev_dat.min_unit = ElevUnit.Meters
+                cat.elev_dat.min_elev = 0
+                cat.elev_dat.max_unit = ElevUnit.SaltBound
+                cat.elev_dat.max_elev = 1.0
             if i in [20, 11, 9]:  # InlandShore, OceanBeach, EstuarineBeach
                 cat.elev_dat.min_unit = ElevUnit.HalfTide
                 cat.elev_dat.min_elev = -1.0

@@ -288,7 +288,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
     use_flood_dev_dry_land: bool = False
 
     include_dikes: bool = False
-    classic_dike: bool = False
+    classic_dike: bool = True
 
     init_elev_stats: bool = False
     n_elev_stats: int = 0
@@ -1842,7 +1842,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                 read_cell['prot_dikes'] = int(dik_number) != NO_DATA and dik_number != 0
                 if not self.classic_dike:
                     read_cell['elev_dikes'] = int(dik_number) != NO_DATA and dik_number > 0
-                    if nwi_number in range(15, 20) or nwi_number == NO_DATA:
+                    if (nwi_number in range(15, 20) or nwi_number == NO_DATA) and read_cell['elev_dikes']:
                         nwi_number = 1
 
                 # Salinity assignment
@@ -4239,7 +4239,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                 if self.output_year(self.year):
                     result = self.save_gis_files(file_format)
 
-            first_step_time = round((time.time()-self.start_time)/60, 1)-self.memory_load_time
+            first_step_time = round((time.time()-self.start_time)/60-self.memory_load_time, 1)
             steps_run = self.n_time_steps - 1  # exclude initial condition data slot
             print(f'          Loading data to memory and initialization took {self.memory_load_time} minutes')
             print(f'          First step took {first_step_time} minutes')
