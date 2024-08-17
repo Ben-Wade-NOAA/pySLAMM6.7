@@ -1,5 +1,8 @@
-PySLAMM 6.7 Installation and Test Instructions
-8/13/2024--  initial release instructions
+PySLAMM 6.7 Installation Instructions
+
+![slamm6](https://github.com/user-attachments/assets/5990dfd2-0c43-456f-be7c-3d07a4c5fb52)
+
+8/13/2024--  initial release
 
 Linux 
 
