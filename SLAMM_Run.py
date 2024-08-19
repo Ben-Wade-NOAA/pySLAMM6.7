@@ -1,5 +1,5 @@
 import sys
-import time
+import os
 from SLR6 import TSLAMM_Simulation
 from app_global import VERSION_NUM
 from LatinHypercubeRun import uncert_run
@@ -19,17 +19,19 @@ def main():
     with open(file_path, 'r') as file:
         simulation.load_store(file, file_path, VERSION_NUM, True)
 
-    # if drive_externally:
-    if simulation.run_sensitivity:
-        sens_run(simulation)
-    if simulation.run_uncertainty:
-        uncert_run(simulation)
-    else:
-        simulation.execute_run()
+    file_dir = os.path.dirname(file_path)
+    os.chdir(file_dir)
 
-    simulation.dispose_mem()
+    try:
+        if simulation.run_sensitivity:
+            sens_run(simulation)
+        if simulation.run_uncertainty:
+            uncert_run(simulation)
+        else:
+            simulation.execute_run()
 
-
+    finally:
+        simulation.dispose_mem()
 
 
 if __name__ == "__main__":

@@ -40,6 +40,10 @@ class SharedMemoryArray:  # this array is passed between multiprocessing instanc
             self.shm = None
             self.array = None
 
+    # def __reduce__(self):
+    #     print("WARNING:  Pickling SharedMemoryArray  *  *  *  *")    This code ensured shared_memory working properly
+    #     return (self.__class__, (self.shape, self.dtype, self.shm.name))
+
     def close(self):
         if self.shm:
             self.shm.close()
@@ -96,26 +100,37 @@ class SharedData:  # shared data datastructure that is used by threads or main p
         self.ros_array = SharedMemoryArray(shape, dtype)
 
     def close(self):
+        # Close shared memory views (detach them from the process)
         for shm_array in self.map:
             shm_array.close()
-            shm_array.unlink()
         if self.b_matrix:
             self.b_matrix.close()
-            self.b_matrix.unlink()
         if self.erode_matrix:
             self.erode_matrix.close()
-            self.erode_matrix.unlink()
         if self.map_matrix:
             self.map_matrix.close()
-            self.map_matrix.unlink()
         if self.data_elev:
             self.data_elev.close()
-            self.data_elev.unlink()
         if self.max_fetch_arr:
             self.max_fetch_arr.close()
-            self.max_fetch_arr.unlink()
         if self.ros_array:
             self.ros_array.close()
+
+    def unlink(self):
+        # Unlink (remove) shared memory segments
+        for shm_array in self.map:
+            shm_array.unlink()
+        if self.b_matrix:
+            self.b_matrix.unlink()
+        if self.erode_matrix:
+            self.erode_matrix.unlink()
+        if self.map_matrix:
+            self.map_matrix.unlink()
+        if self.data_elev:
+            self.data_elev.unlink()
+        if self.max_fetch_arr:
+            self.max_fetch_arr.unlink()
+        if self.ros_array:
             self.ros_array.unlink()
 
     def reinitialize_from_shared_memory(self, names, shapes, dtypes):
@@ -213,8 +228,8 @@ def worker_function(start_row, end_row, args, calculate_sums, queue, shared_memo
         if calculate_sums:
             queue.put(None)  # Sentinel value to signal thread completion
 
-        # Close the shared memory views
-        shared_data.close()
+    # Close the shared memory views
+    shared_data.close()
 
 @dataclass
 class SumData:
@@ -794,7 +809,9 @@ class TSLAMM_Simulation:  # primary slamm simulation object
 
     def dispose_mem(self):
         """Explicitly free memory allocated for the map."""
-        self.shared_data.close()  # Deallocate shared data
+        if self.shared_data:
+            self.shared_data.close()
+            self.shared_data.unlink()  # Deallocate shared data
 
     def count_mm_entries(self):
         """Placeholder for method to count memory entries. Actual implementation needed."""
@@ -4246,7 +4263,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             estimated_time = round(first_step_time * steps_run, 1) + self.memory_load_time
             print(f'          This simulation with {steps_run} steps is estimated to take a total of {estimated_time} minutes')
             remaining_time = round(estimated_time - self.memory_load_time - first_step_time, 1)
-            print(f'          (an additional {remaining_time} minutes')
+            print(f'          (an additional {remaining_time} minutes)')
 
             return result
 
@@ -4540,7 +4557,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             if model_ran:
                 print('Completed Simulations')
             else:
-                print('No SLR scenarios were selected to run')
+                print('You must select at least one SLR scenario and one protection scenario to run')
 
     def output_year(self, year):
         if self.gis_each_year:

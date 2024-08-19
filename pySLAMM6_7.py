@@ -70,6 +70,11 @@ class SimulationShell:
     def load(self, file_path):
         try:
             file_path = file_path.strip('\'"')
+
+            # Resolve relative paths or use the current working directory if no directory is specified
+            if not os.path.isabs(file_path):
+                file_path = os.path.abspath(file_path)
+
             file_dir = os.path.dirname(file_path)
             os.chdir(file_dir)
 
@@ -130,7 +135,7 @@ class SimulationShell:
 
             elif parameter.startswith('Protect_'):
                 param_dict = self.simulation.prot_to_run
-                key = ProtectScenario[parameter]
+                key = ProtectScenario[parameter.split('_')[1]]
                 value = value.lower() in ['true', '1', 'yes']
                 param_dict[key] = value
                 print(f'{parameter} set to {value}')
@@ -199,16 +204,27 @@ class SimulationShell:
             with open(self.simulation.file_name, 'w') as savefile:
                 self.simulation.load_store(savefile, self.simulation.file_name, VERSION_NUM, False, split_files)
 
-            print("Model saved to file: " + self.simulation.file_name)
+            if split_files:
+                print("Model saved to multiple files, base file: " + self.simulation.file_name)
+            else: print("Model saved to file: " + self.simulation.file_name)
 
         except Exception as e:
             print(f'Failed to save model: {e}')
 
     def saveas(self, filen, split_files =False):
-        filen = filen.strip('\'"')
         if self.simulation is None:
             print("No simulation loaded")
             return
+
+        filen = filen.strip('\'"')
+
+        # Resolve relative paths or use the current working directory if no directory is specified
+        if not os.path.isabs(filen):
+            filen = os.path.abspath(filen)
+
+        file_path = os.path.dirname(filen)
+        os.chdir(file_path)
+
         try:
             # Check if the file exists
             if os.path.exists(filen):
@@ -221,11 +237,12 @@ class SimulationShell:
             with open(filen, 'w') as savefile:
                 self.simulation.load_store(savefile, filen, VERSION_NUM, False, split_files)
 
-            print("Model saved to file: " + filen)
+            if split_files:
+                print("Model saved to multiple files, base file: " + filen)
+            else: print("Model saved to file: " + filen)
 
         except Exception as e:
             print(f'Failed to save model: {e}')
-
 
     def new_model(self, CA_Categories=False):
         self.simulation = TSLAMM_Simulation(CA_Categories)
@@ -248,6 +265,9 @@ class SimulationShell:
             print(f'Execution completed, model run log saved to: {self.simulation.run_record_file_name}')
         except Exception as e:
             print(f'Failed to run model: {e}')
+
+        finally:
+            self.simulation.dispose_mem()
 
     def run(self):  # run the command line shell itself
         print('type ? for a command list')
