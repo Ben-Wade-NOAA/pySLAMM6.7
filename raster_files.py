@@ -192,7 +192,7 @@ class TSLAMMOutputFile(TSLAMMFile):
         self.file_format = fformat
         if self.file_format == FileFormat.GEOTIFF:
             # Initialize the data array and setup for writing
-            self.data = np.empty((nr, nc), dtype=np.float32)  # fixme assuming float32 for simplicity
+            self.data = np.empty((nr, nc), dtype=np.float32)  # assuming float32 for simplicity
             self.current_index = 0
 
     def write_header(self, prompt=False):
@@ -212,7 +212,7 @@ class TSLAMMOutputFile(TSLAMMFile):
 
                 if self.file_format == FileFormat.GEOTIFF:
                     # Define the data type and the no data value
-                    data_type = 'float32'    # fixme modify for elevations (float) vs. categories (Int)
+                    data_type = 'float32'    # could be modified  for elevations (float) vs. categories (Int)
                     file_no_data = NO_DATA
 
                     # Set up the affine transformation for the raster
@@ -228,7 +228,7 @@ class TSLAMMOutputFile(TSLAMMFile):
                         'height': self.row,
                         'count': 1,  # Number of bands; change if multi-band
                         'compress': 'deflate',  # Using DEFLATE compression
-                        'crs': None,  # CRS is set to None, which means unspecified  fixme
+                        'crs': None,  # CRS is set to None, which means unspecified, could be fixed later
                         'transform': transform
                     }
                     self.write_stream = rasterio.open(self.file_name, 'w', **meta)

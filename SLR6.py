@@ -739,8 +739,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             self.shared_data.map[block_index].array[sub_index] = cell
         except IndexError as e:
             if self.optimize_level > 0:
-                raise ValueError("Range Check Error. This likely means your map has changed and you need to "
-                                 "re-count cells to track for optimization. Original error: {}".format(e))
+                raise ValueError("Range Check Error. Optimized map is the wrong size.".format(e))
             else:
                 raise
 
@@ -814,9 +813,7 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             self.shared_data.unlink()  # Deallocate shared data
 
     def count_mm_entries(self):
-        """Placeholder for method to count memory entries. Actual implementation needed."""
-        # Example implementation
-        self.num_mm_entries = 100000  # Example number, needs actual logic to determine
+        result = self.make_data_file(True, '', '')
 
     def set_bit(self, n, row, col, set_true):
         """ Set a bit in the b_matrix. """
@@ -1669,7 +1666,10 @@ class TSLAMM_Simulation:  # primary slamm simulation object
             self.ss_raster_slr[1] = os.path.exists(slr_file_n)
 
         # MAIN BODY OF make_data_file
-        print("Loading Data Files...")
+        if count_only:
+            print("Calculating Memory Size Required...")
+        else:
+            print("Loading Data Files...")
 
         template_cell: compressed_cell_dtype
         gis_lookup = [-99] * 256
@@ -1821,13 +1821,15 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                 nwi_number = int(nwi_file.get_next_number()) if nwi_file else BLANK
                 if nwi_number == 0:
                     nwi_number = BLANK
+                if nwi_number == NO_DATA:
+                    nwi_number = BLANK
 
                 # Handle impervious file data
                 if imp_f_exists:
                     pct_imp = int(imp_file.get_next_number())
                     read_cell['imp_coeff'] = pct_imp
-                    if pct_imp >= 0 and nwi_number in (1, 2):
-                        nwi_number = 1 if pct_imp > 25 else 2
+                    if pct_imp >= 0 and nwi_number in (1, 2):   # classic categories only, developed & undeveloped
+                        nwi_number = 1 if pct_imp > 25 else 2   # 1 is developed dry land
 
                 # MTL Correction and Lagoon adjustment
                 mtl_correction = subsite.navd88mtl_correction
@@ -1852,15 +1854,15 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                         if int(elev_number) != NO_DATA and len(self.uncert_setup.z_uncert_map[i]) > 0:
                             elev_number += self.uncert_setup.z_uncert_map[i][flat_arr_index]
 
-                if nwi_number == NO_DATA:
-                    nwi_number = BLANK
-
                 # Dike attributes
                 read_cell['prot_dikes'] = int(dik_number) != NO_DATA and dik_number != 0
                 if not self.classic_dike:
                     read_cell['elev_dikes'] = int(dik_number) != NO_DATA and dik_number > 0
-                    if (nwi_number in range(15, 20) or nwi_number == NO_DATA) and read_cell['elev_dikes']:
+                    if (nwi_number in range(15, 20) or nwi_number == NO_DATA) and read_cell['elev_dikes']:  # classic categories only: a cell with a dike in open water is converted to developed dry land
                         nwi_number = 1
+
+                # Assign land cover category
+                read_cat = gis_lookup[int(nwi_number)] if 0 <= nwi_number <= 255 else BLANK
 
                 # Salinity assignment
                 if sal_f_exists:
@@ -1879,12 +1881,9 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                 read_cell['erosion_loss'] = 0
                 read_cell['btf_erosion_loss'] = 0
 
-                # Assign land cover category
-                read_cat = gis_lookup[int(nwi_number)] if 0 <= nwi_number <= 255 else BLANK
-
                 # Handling for no elevation data
                 if int(elev_number) == NO_DATA and self.load_blank_if_no_elev:
-                    if nwi_number not in (self.categories.estuarine_water, self.categories.open_ocean):
+                    if read_cat not in (self.categories.estuarine_water, self.categories.open_ocean):
                         read_cat = BLANK
 
                 set_cell_width(read_cell, read_cat, total_width)
@@ -1958,11 +1957,11 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                         ros_bound.y2 = max(ros_bound.y2, ER)
 
                 # Determine whether to add this cell to the map
-                add_to_map = (self.optimize_level == 0) or ((nwi_number != NO_DATA) and (nwi_number != BLANK + 1))
-                neg_num = -99
+                add_to_map = (self.optimize_level == 0) or (read_cat != BLANK)
+                neg_num = -99  # blank
                 if self.optimize_level > 1:
-                    if (nwi_number in [self.categories.open_ocean, self.categories.estuarine_water]) or \
-                            ((nwi_number in [self.categories.dev_dry_land, self.categories.und_dry_land]) and (
+                    if (read_cat in [self.categories.open_ocean, self.categories.estuarine_water]) or \
+                            ((read_cat in [self.categories.dev_dry_land, self.categories.und_dry_land]) and (
                                     cat_elev(read_cell, read_cat) > ELEV_CUTOFF)):
                         neg_num = -nwi_number
                         add_to_map = False
@@ -4328,8 +4327,17 @@ class TSLAMM_Simulation:  # primary slamm simulation object
                     catg.has_sal_rules = True
                     catg.salinity_rules.rules.append(self.sal_rules.rules[nr])
                     catg.salinity_rules.n_rules += 1
+            try:
+                result = self.make_data_file(False, '', '')
+            except ValueError as e:
+                if self.optimize_level > 0:
+                    self.num_mm_entries = 0
+                    self.shared_data = None
+                    print ('Error loading map to memory.  Optimization size incorrect.  Recounting map size.')
+                    result = self.make_data_file(False, '', '')
+                else:
+                    raise
 
-            result = self.make_data_file(False, '', '')
             if not result:
                 self.user_stop = True
                 restore_subsites()
