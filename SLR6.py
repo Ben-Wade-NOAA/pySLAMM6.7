@@ -432,7 +432,11 @@ class TSLAMM_Simulation:  # primary slamm simulation object
 
         self.fixed_scenarios: List[bool] = [False] * 11
         self.custom_slr_array: List[float] = []
-
+        
+        self.n_time_ser_slr = 2
+        while len(self.time_ser_slrs) < self.n_time_ser_slr:
+                self.time_ser_slrs.append(TTimeSerSLR(len(self.time_ser_slrs)+1))  # 8/30/2024 add example time series
+        
         self.gis_years = "2100"
         self.gis_each_year = True
         self.cpu_count = os.cpu_count() or 1  # Cache the CPU count   1 to go to one CPU  min(os.cpu_count(),4)

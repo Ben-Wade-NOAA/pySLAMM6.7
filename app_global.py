@@ -1085,8 +1085,30 @@ class TTimeSerSLR:
     name: str = ""
     base_year: int = 2000
     n_years: int = 0
-    run_now: bool = True
-    slr_arr: List[TSRecord] = field(default_factory=list)  # year, value
+    
+    def __init__(self, example_sim: int = 0):
+        self.slr_arr = []  # Create an empty list to store TSRecord instances
+        self.run_now = (example_sim == 0)
+        
+        if example_sim == 1:
+            self.name = "Example 1M"
+            self.n_years = 4
+            self.slr_arr = [
+                TSRecord(2025, 0.10),
+                TSRecord(2050, 0.25),
+                TSRecord(2075, 0.45),
+                TSRecord(2100, 1.0)
+            ]
+            
+        if example_sim == 2:
+            self.name = "Example 1.5M"
+            self.n_years = 4
+            self.slr_arr = [
+                TSRecord(2025, 0.15),
+                TSRecord(2050, 0.4),
+                TSRecord(2075, 0.75),
+                TSRecord(2100, 1.5)
+            ]
 
     def load_store(self, file, read_version_num, is_reading):
         self.name = ts_read_write(file, 'Name', self.name, str, is_reading)
