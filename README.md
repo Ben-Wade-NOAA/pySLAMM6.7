@@ -3,9 +3,38 @@
 **Version:** Initial release on 08/19/2024
 
 ---
+
 ![slamm6](https://github.com/user-attachments/assets/5990dfd2-0c43-456f-be7c-3d07a4c5fb52)
 
-## Linux
+## Introduction
+
+**PySLAMM 6.7** is a Python translation of the SLAMM 6.7 code originally written in Delphi (object-oriented Pascal for Windows). This project was funded by the Coastal Resilience branch of NCCOS (NOAA) under contract to Consolidated Safety Services Incorporated (CSS), with oversight from Christine Addison Buckel, Ramin Familkhalili, and Rebecca Atkins.
+
+All model process code has been translated to Python and tested across multiple operating systems. While the graphical user interface (GUI) is not included, PySLAMM 6.7 can read SLAMM text files produced by SLAMM 6.7 Delphi and has been tested to machine accuracy against model results from the original version. This allows models to be created using the Windows GUI and then executed in Python. Additionally, PySLAMM 6.7 can read inputs from and write outputs to GeoTIFF format, simplifying access to model data via GIS.
+
+### Model Access Methods
+
+PySLAMM 6.7 can be accessed in Python through several methods:
+
+- **Command Line Execution:**
+  - Run the `SLAMM_Run.py` script from the command line, passing the model input file as a parameter. The model run will complete automatically.
+
+- **Simplified Command-Line Interface:**
+  - Run the `pySLAMM6_7.py` file to access a set of commands (e.g., `Load`, `Run_model`). Enter `?` to view available commands.
+
+- **Python Scripting:**
+  - Import SLAMM6.7 objects into your Python script and modify them directly for customized model runs.
+
+### Documentation
+
+For detailed guidance, please refer to the following documents:
+
+- [PySLAMM 6.7 Technical Documentation](https://github.com/WarrenPinnacle/pySLAMM6.7/blob/main/docs/pySLAMM_6.7_Technical_Documentation.pdf)
+
+- [PySLAMM 6.7 User's Manual](https://github.com/WarrenPinnacle/pySLAMM6.7/blob/main/docs/pySLAMM_6.7_Users_Manual.pdf)
+
+---
+## Linux Installation
 
 1. **Transfer the Installation File**
    - Use `scp` to transfer the file to the user directory.
@@ -53,7 +82,7 @@
 
 ---
 
-## Windows
+## Windows Installation
 
 1. **Install Python 3.11**
    - Download Python 3.11 from [python.org](https://www.python.org/downloads/).
