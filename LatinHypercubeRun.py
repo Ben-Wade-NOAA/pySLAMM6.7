@@ -1,3 +1,56 @@
+"""
+This module contains the implementation of the uncertainty run for the SLAMM model.
+Classes:
+    UResultsTypes(Enum): Enumeration for different types of uncertainty results.
+Functions:
+    uncert_run(ss: TSLAMM_Simulation):
+        Executes the uncertainty run for the SLAMM model.
+        Args:
+            ss (TSLAMM_Simulation): The SLAMM simulation object.
+        Internal Functions:
+            conflicting_distribution(in_dist: int, check_all_subsites: bool) -> bool:
+                Checks for conflicting distributions.
+            no_commas(in_str: str) -> str:
+                Replaces commas with colons in a string.
+            random_int(top: int) -> int:
+                Generates a random integer up to a specified top value.
+            calculate_draw(interval: int) -> float:
+                Calculates a draw value based on the distribution type and interval.
+            fill_variable_draws(indx: int):
+                Fills the list associated with each used distribution with UncertDraw objects.
+            accumulate_uncertainty_results(ns_loop):
+                Accumulates the uncertainty results for each iteration.
+            init_text_results() -> bool:
+                Initializes the text results file.
+            dist_to_text():
+                Writes the distribution summary to the text results file.
+            write_dist_summaries():
+                Writes the summaries of the distributions to the output files.
+            verify_uncert_setup() -> bool:
+                Verifies the uncertainty setup.
+            cleanup():
+                Cleans up the global variables.
+            save_gt0_gt1():
+                Saves the initial GT and SE values.
+            restore_remaining_ses():
+                Restores the remaining SE values.
+            restore_vals():
+                Restores the values of the distributions.
+            call_set_values():
+                Sets the values for the distributions.
+            modify_remaining_ses():
+                Modifies the remaining SE values.
+        Global Variables:
+            text_out: The text output file.
+            iterations_done: The number of iterations completed.
+            output_files: The list of output files.
+            num_output_files: The number of output files.
+            delta_se: The delta SE values.
+            se0: The initial SE values.
+            gt0: The initial GT values.
+            gt1: The modified GT values.
+"""
+
 import random
 from app_global import *
 import os
@@ -5,6 +58,8 @@ import datetime
 from SLR6 import TSLAMM_Simulation
 from uncert_defn import UncertDraw, DistType
 from enum import Enum
+
+
 
 NUM_UNCERT_OUTPUTS = 27
 

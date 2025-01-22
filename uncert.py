@@ -3,6 +3,82 @@ from calc_dist import r_normal
 from app_global import *
 
 
+"""
+A class to handle uncertainty calculations for the SLAMM model.
+Attributes:
+    num_dists (int): Number of distributions.
+    dist_array (Optional[List[TInputDist]]): Array of input distributions.
+    num_sens (int): Number of sensitivity parameters.
+    sens_array (Optional[List[TSensParam]]): Array of sensitivity parameters.
+    pct_to_vary (int): Percentage to vary.
+    seed (int): Seed for random number generation.
+    iterations (int): Number of iterations.
+    gis_start_num (int): GIS start number.
+    use_seed (bool): Flag to use seed.
+    use_segt_slope (bool): Flag to use segment slope.
+    segt_slope (float): Segment slope value.
+    unc_sens_iter (int): Uncertainty sensitivity iteration.
+    unc_sens_row (int): Uncertainty sensitivity row.
+    n_map_iter (int): Number of map iterations.
+    map_deriving (int): Map deriving value.
+    q_value (float): Q value.
+    z_map (Optional[np.ndarray]): Z map.
+    prev_z_map (Optional[np.ndarray]): Previous Z map.
+    z_uncert_map (List[np.ndarray]): Final uncertainty maps with appropriate RMSE and correlation.
+    map_rows (int): Number of map rows.
+    map_cols (int): Number of map columns.
+    output_path (str): Output path.
+    csv_path (str): CSV path.
+    sens_plus_loop (bool): Sensitivity plus loop flag.
+"""
+#def get_z(self, er: int, ec: int, map_rows: int, map_cols: int) -> float:
+"""
+Get the Z value at a specific row and column.
+Args:
+    er (int): Row index.
+    ec (int): Column index.
+    map_rows (int): Total number of rows in the map.
+    map_cols (int): Total number of columns in the map.
+Returns:
+    float: Z value at the specified location.
+"""
+#def make_uncert_map(self, map_num: int, nr: int, nc: int, rmse: float, q_val: float):
+"""
+Create an uncertainty map.
+Args:
+    map_num (int): Map number.
+    nr (int): Number of rows.
+    nc (int): Number of columns.
+    rmse (float): Root mean square error.
+    q_val (float): Q value.
+"""
+#def thread_uncert_map(self, start_row: int, end_row: int, map_rows: int, map_cols: int, map_deriving: int, q_value: float, r_val: float) -> float:
+"""
+Execute uncertainty map calculations in a threaded manner.
+Args:
+    start_row (int): Starting row index.
+    end_row (int): Ending row index.
+    map_rows (int): Total number of rows in the map.
+    map_cols (int): Total number of columns in the map.
+    map_deriving (int): Map deriving value.
+    q_value (float): Q value.
+    r_val (float): R value.
+Returns:
+    float: Maximum change in the map.
+"""
+"""
+Destructor for TSLAMM_Uncertainty.
+"""
+#def load_store(self, file, read_version_num: int, is_reading: bool, pss):
+"""
+Load or store the state of the TSLAMM_Uncertainty object.
+Args:
+    file: File object for reading or writing.
+    read_version_num (int): Version number for reading.
+    is_reading (bool): Flag indicating if the operation is reading.
+    pss: Additional parameter for loading/storing.
+"""
+
 class TSLAMM_Uncertainty:
     def __init__(self):
         self.num_dists = 0

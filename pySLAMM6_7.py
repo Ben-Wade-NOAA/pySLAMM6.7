@@ -1,3 +1,28 @@
+
+"""
+This script defines a command-line interface for running and managing TSLAMM (Sea Level Affecting Marshes Model) simulations.
+Classes:
+    SimulationShell: A class that provides methods to load, save, set parameters, and run TSLAMM simulations.
+Functions:
+    __init__: Initializes the SimulationShell instance and sets up signal handlers.
+    setup_signal_handler: Sets up signal handlers for graceful termination.
+    signal_handler: Handles interruptions and exits the program cleanly.
+    load: Loads a simulation from a specified file.
+    show: Displays the value of a specified parameter or all parameters.
+    sethelp: Displays help information for the set command.
+    showhelp: Displays help information for the show command.
+    set: Sets the value of a specified parameter.
+    get_parameter_value: Retrieves and displays the value of a specified parameter.
+    save: Saves the current simulation to a file.
+    saveas: Saves the current simulation to a specified file.
+    new_model: Creates a new simulation model.
+    run_model: Runs the simulation model.
+    run: Runs the command-line shell.
+    process_command: Processes a command entered by the user.
+Usage:
+    Run the script and follow the command-line prompts to manage TSLAMM simulations.
+"""
+
 import sys
 import os
 import signal
@@ -7,7 +32,7 @@ from SensitivityRun import sens_run
 from SLR6 import TSLAMM_Simulation
 from app_global import VERSION_NUM, IPCCScenarios, IPCCEstimates, ProtectScenario
 
-
+# Define parameter types and their expected data types
 parm_types = [
     "file_name",            "{string}",
     "sim_name",             "{string}",
@@ -48,9 +73,9 @@ parm_types = [
     "Protect_ProtAll",      "{true/false}"
 ]
 
+# Separate parameter names and types into two lists
 parameters = parm_types[::2]  # Take every second element starting from index 0
-ptypes = parm_types[1::2]      # Take every second element starting from index 1
-
+ptypes = parm_types[1::2]     # Take every second element starting from index 1
 
 class SimulationShell:
     def __init__(self):
@@ -58,15 +83,18 @@ class SimulationShell:
         self.running = True
         self.setup_signal_handler()
 
+    # Setup signal handlers for graceful termination
     def setup_signal_handler(self):
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
 
+    # Signal handler to handle interruptions
     def signal_handler(self, sig, frame):
         print("\nProcess interrupted. Exiting...")
         self.running = False
         sys.exit(0)  # This will ensure the program exits cleanly
 
+    # Load a simulation from a file
     def load(self, file_path):
         try:
             file_path = file_path.strip('\'"')
@@ -85,6 +113,7 @@ class SimulationShell:
         except Exception as e:
             print(f'Failed to load simulation: {e}')
 
+    # Show the value of a parameter or all parameters
     def show(self, parameter):
         if self.simulation is None:
             print("No simulation loaded")
@@ -98,6 +127,7 @@ class SimulationShell:
         else:
             self.get_parameter_value(parameter)
 
+    # Display help for the set command
     def sethelp(self, parameter= None):
         if parameter == "?":
             print("input is 'set {parameter} {value}'.  Parameters listed below\n")
@@ -106,6 +136,7 @@ class SimulationShell:
         else:
             print("Type 'set ?' for a list of available parameters")
 
+    # Display help for the show command
     def showhelp(self, parameter= None):
         if parameter == "?":
             print("input is 'show {parameter}' or 'show all'.  Parameters listed below\n")
@@ -114,6 +145,7 @@ class SimulationShell:
         else:
             print("Type 'show ?' for a list of available parameters")
 
+    # Set the value of a parameter
     def set(self, parameter, value):
         if self.simulation is None:
             print("No simulation loaded")
@@ -164,7 +196,7 @@ class SimulationShell:
         except ValueError as e:
             print(f'"{value}" is not a valid setting for "{parameter}"')
 
-
+    # Get the value of a parameter
     def get_parameter_value(self, parameter):
         if hasattr(self.simulation, parameter):
             value = getattr(self.simulation, parameter)
@@ -188,6 +220,7 @@ class SimulationShell:
                 return
             print(f'{parameter}: {value}')
 
+    # Save the current simulation to a file
     def save(self, split_files =False):
         if self.simulation is None:
             print("No simulation loaded")
@@ -211,6 +244,7 @@ class SimulationShell:
         except Exception as e:
             print(f'Failed to save model: {e}')
 
+    # Save the current simulation to a specified file
     def saveas(self, filen, split_files =False):
         if self.simulation is None:
             print("No simulation loaded")
@@ -244,10 +278,12 @@ class SimulationShell:
         except Exception as e:
             print(f'Failed to save model: {e}')
 
+    # Create a new simulation model
     def new_model(self, CA_Categories=False):
         self.simulation = TSLAMM_Simulation(CA_Categories)
         print("New simulation created.")
 
+    # Run the simulation model
     def run_model(self, cpu_count=None):
         if self.simulation is None:
             print("No simulation loaded")
@@ -269,7 +305,8 @@ class SimulationShell:
         finally:
             self.simulation.dispose_mem()
 
-    def run(self):  # run the command line shell itself
+    # Run the command line shell itself
+    def run(self):
         print('type ? for a command list')
         while self.running:
             try:
@@ -282,6 +319,7 @@ class SimulationShell:
             except Exception as e:
                 print(f'Error processing command: {e}')
 
+    # Process a command entered by the user
     def process_command(self, command):
         parts = shlex.split(command)  # Use shlex to split the command line correctly
         if not parts:
@@ -333,7 +371,7 @@ class SimulationShell:
         else:
             print("Unknown command, type ? for a command list")
 
-
+# Main entry point for the script
 if __name__ == '__main__':
     shell = SimulationShell()
     shell.run()

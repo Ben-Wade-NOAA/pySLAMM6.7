@@ -1,3 +1,24 @@
+
+"""
+This module defines classes and methods for handling salinity data from Excel files.
+Classes:
+    SalRec: Represents a salinity record with attributes for relative sea level rise (rslr) and flow (q).
+    TSalArray: Manages an array of salinity data, including reading from Excel files and performing calculations.
+Methods:
+    __init__(self, file_name, st): Initializes the TSalArray object and reads salinity data from an Excel file.
+    read_sal_array_from_excel(self, file_name, st: TSite): Reads salinity data from an Excel file and initializes various attributes.
+    set_origin_plume_midline(self, index): Sets the origin, plume, and midline points for salinity stations.
+    slam_proj_to_xy(self, x, y): Converts SLAMM projection coordinates to XY coordinates.
+    get_salinity(self, x, y, sal_val): Calculates the salinity at a given point based on the salinity values.
+    extract_salinity_record(self, slamm_rslr, slamm_q): Extracts a salinity record based on SLAMM relative sea level rise and flow.
+    distance_pt_to_line(self, ln: DLine, p: DPoint): Calculates the distance from a point to a line.
+    abs_distance_pt_to_line(self, ln, p): Calculates the absolute distance from a point to a line.
+    distance_2_pts(self, p1, p2): Calculates the distance between two points.
+    cross_segment(self, p1, p2, ln): Checks if a segment crosses a line.
+    __del__(self): Destructor to clean up resources.
+"""
+
+
 import pandas as pd
 from app_global import *
 

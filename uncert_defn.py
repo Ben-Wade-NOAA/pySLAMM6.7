@@ -1,6 +1,38 @@
+"""
+This module defines classes and functions for handling uncertainty distributions in the pySLAMM application.
+Classes:
+    DistType(Enum): Enumeration of different distribution types.
+    TInputDist: Represents an input distribution with various methods for handling distributions.
+    UncertDraw: Represents a single uncertainty draw with value, random draw, and interval number.
+    TSensParam(TInputDist): Inherits from TInputDist and adds methods for setting and restoring values for sensitivity parameters.
+Constants:
+    NUM_UNCERT_PARAMS (int): Number of uncertainty parameters.
+    PRE_ACCR (int): Pre-accretion constant.
+Functions:
+    TInputDist.__init__(self, id_num, p_slamm_sim, all_subs, ss_num): Initializes a TInputDist object.
+    TInputDist.load_store(self, file, read_version_num, is_reading): Loads or stores distribution data from/to a file.
+    TInputDist.trunc_icdf(self, prob): Calculates the inverse cumulative distribution function for truncated distributions.
+    TInputDist.icdf(self, prob): Calculates the inverse cumulative distribution function based on the distribution type.
+    TInputDist.trunc_cdf(self, x_val): Calculates the cumulative distribution function for truncated distributions.
+    TInputDist.cdf(self, x_val): Calculates the cumulative distribution function based on the distribution type.
+    TInputDist.get_name(self, include_ss): Retrieves the name of the distribution, optionally including subsite information.
+    TInputDist.name_from_index(indx): Retrieves the name associated with the distribution index.
+    TInputDist.z_map_index(self) -> int: Returns the index for elevation data uncertainty.
+    TInputDist.get_value_object(self, ssn): Returns a tuple with the object, attribute name, and index for the given subsite number.
+    TInputDist.get_value(self): Retrieves the value for the subsite or global subsite if all_subsites is true.
+    TInputDist.update_value(self, subsite_num, operation, value=None): Updates the attribute based on the provided operation.
+    TInputDist.set_values(self, multiplier): Sets values for the subsite or global subsite.
+    TInputDist.restore_values(self): Restores values for the subsite or global subsite.
+    TInputDist.summarize_dist(self): Summarizes the distribution parameters as a string.
+    TSensParam.set_values(self, multiplier): Sets values for all relevant subsites or globally.
+    TSensParam.restore_values(self): Restores values for all relevant subsites or globally.
+"""
+
 from app_global import *
 from enum import Enum
 from calc_dist import *
+
+
 
 NUM_UNCERT_PARAMS = 51
 PRE_ACCR = 27

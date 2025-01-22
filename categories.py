@@ -1,6 +1,70 @@
 from app_global import *
 from utility import cell_width
 
+"""
+This module defines the TCategory and TCategories classes used in the pySLAMM application.
+Classes:
+    TCategory: Represents a single category with various attributes and methods for handling inundation, loading/storing data, and more.
+    TCategories: Manages a collection of TCategory objects, providing methods for loading/storing data, setting up default categories, and more.
+TCategory:
+    Attributes:
+        gis_number (int): GIS number for the category.
+        text_name (str): Name of the category.
+        is_open_water (bool): Indicates if the category is open water.
+        is_tidal (bool): Indicates if the category is tidal.
+        is_non_tidal_wetland (bool): Indicates if the category is a non-tidal wetland.
+        is_dryland (bool): Indicates if the category is dryland.
+        is_developed (bool): Indicates if the category is developed.
+        color (str): Color representation of the category.
+        agg_cat (AggCategories): Aggregation category.
+        use_ifm_collapse (bool): Indicates if IFM collapse is used.
+        use_rfm_collapse (bool): Indicates if RFM collapse is used.
+        use_wave_erosion (bool): Indicates if wave erosion is used.
+        inundate_to (int): Primary inundation target.
+        n_inund_rules (int): Number of inundation rules.
+        inund_rules (List[int]): List of inundation rules.
+        erode_to (int): Erosion target.
+        elevation_stats (List['TElevStats']): List of elevation statistics.
+        has_sal_rules (bool): Indicates if salinity rules are present.
+        salinity_rules (Optional['TSalinityRules']): Salinity rules.
+        has_sal_stats (bool): Indicates if salinity statistics are present.
+        mab (float): Aboveground biomass per unit area.
+        rsc (float): Soil carbon storage rate.
+        ech4 (float): Methane emission rate.
+        cseq_notes (str): Notes on carbon sequestration.
+        pss (Optional['TSLAMM_Simulation']): Pointer to TSLAMM_Simulation.
+        erode_model (ErosionInputs): Erosion model.
+        accr_model (AccrModels): Accretion model.
+    Methods:
+        __init__(self, tss): Initializes a TCategory instance.
+        inund_cat(self, pic: TInundContext): Determines the inundation category based on context.
+        text_inund_rule(self, nr): Returns the description of an inundation rule.
+        load_store(self, file, read_version_num, is_reading): Loads or stores category data from/to a file.
+TCategories:
+    Attributes:
+        n_cats (int): Number of categories.
+        cats (List[TCategory]): List of TCategory objects.
+        dev_dry_land (int): Index of developed dry land category.
+        und_dry_land (int): Index of undeveloped dry land category.
+        flood_dev_dry_land (int): Index of flooded developed dry land category.
+        open_ocean (int): Index of open ocean category.
+        estuarine_water (int): Index of estuarine water category.
+        blank_cat (TCategory): Blank category used as a default.
+        pss (Optional['TSLAMM_Simulation']): Pointer to TSLAMM_Simulation.
+    Methods:
+        __init__(self, ss: Optional['TSLAMM_Simulation']): Initializes a TCategories instance.
+        clear_cats(self): Clears all categories from the list.
+        destroy(self): Destructor for cleaning up resources.
+        get_cat(self, num: int) -> TCategory: Retrieves a category by its number.
+        load_store(self, file, read_version_num, is_reading): Loads or stores categories data from/to a file.
+        setup_slamm_default(self): Sets up default SLAMM categories.
+        are_california(self) -> bool: Checks if the categories are for California.
+        setup_ca_default(self): Sets up default California categories.
+        set_cseq_defaults(self, ca: bool): Sets carbon sequestration defaults.
+        write_tech_specs(self): Writes technical specifications to a file.
+"""
+
+
 
 @dataclass
 class TCategory:

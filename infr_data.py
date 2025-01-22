@@ -6,6 +6,31 @@ import shutil
 from dbf import Table, DbfError, dbf
 import os
 
+""" 
+This module defines classes and functions for handling infrastructure data, including roads and points, 
+within the pySLAMM simulation framework. It includes data structures for representing points, lines, 
+and boundaries, as well as classes for managing infrastructure data and calculating inundation frequencies.
+Classes:
+    DPoint: Represents a point with x and y coordinates.
+    DLine: Represents a line with coefficients a, b, and c.
+    DBoundary: Represents a boundary with minimum and maximum row and column indices.
+    LineRec: Represents a record for a line with various attributes including row, column, shape index, 
+             road class, coordinates, elevation, and inundation frequency.
+    PointRec: Represents a record for a point with various attributes including row, column, shape index, 
+              coordinates, elevation, and inundation frequency.
+    TInfrastructure: Base class for infrastructure data management, including methods for calculating 
+                     cell inundation, updating inundation frequency, checking validity, loading and storing data, 
+                     and creating output DBF files.
+    TRoadInfrastructure: Subclass of TInfrastructure for managing road infrastructure data, including methods 
+                         for calculating road inundation, loading and saving road data, initializing road variables, 
+                         and writing road data to DBF files.
+    TPointInfrastructure: Subclass of TInfrastructure for managing point infrastructure data, including methods 
+                          for calculating point inundation, initializing point variables, and writing point data 
+                          to DBF files.
+Functions:
+    inund_text(i_f: int) -> str: Returns a string description of the inundation frequency based on the input integer.
+"""
+
 
 @dataclass
 class DPoint:

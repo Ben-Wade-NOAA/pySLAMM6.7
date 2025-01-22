@@ -1,6 +1,40 @@
 import math
 import random
 
+
+"""
+This module provides various statistical distribution functions and their cumulative distribution functions (CDF) and inverse cumulative distribution functions (ICDF).
+Functions:
+    r_normal(Mean, StandardDeviation):
+        Generates a random number from a normal distribution with the given mean and standard deviation.
+    r_lognormal(GM, GSD):
+        Generates a random number from a log-normal distribution with the given geometric mean and geometric standard deviation.
+    r_triangular(Minimum, Maximum, MostLikely):
+        Generates a random number from a triangular distribution with the given minimum, maximum, and most likely values.
+    r_uniform(Minimum, Maximum):
+        Generates a random number from a uniform distribution within the given minimum and maximum values.
+    cdf_normal(y, mean, dev):
+        Computes the cumulative distribution function for a normal distribution with the given mean and standard deviation.
+    icdf_normal(prob, mean, dev):
+        Computes the inverse cumulative distribution function for a normal distribution with the given mean and standard deviation.
+    cdf_lognormal(x, GM, GSD):
+        Computes the cumulative distribution function for a log-normal distribution with the given geometric mean and geometric standard deviation.
+    icdf_lognormal(prob, GM, GSD):
+        Computes the inverse cumulative distribution function for a log-normal distribution with the given geometric mean and geometric standard deviation.
+    icdf_triangular(y, A, B, ML):
+        Computes the inverse cumulative distribution function for a triangular distribution with the given minimum (A), maximum (B), and most likely (ML) values.
+    cdf_triangular(X, A, B, ML):
+        Computes the cumulative distribution function for a triangular distribution with the given minimum (A), maximum (B), and most likely (ML) values.
+    cdf_uniform(X, A, B):
+        Computes the cumulative distribution function for a uniform distribution within the given minimum (A) and maximum (B) values.
+    icdf_uniform(Prob, A, B):
+        Computes the inverse cumulative distribution function for a uniform distribution within the given minimum (A) and maximum (B) values.
+Constants:
+    ERROR_VALUE:
+        A constant value used to indicate an error in the computation.
+"""
+
+
 ERROR_VALUE = -99.9
 
 

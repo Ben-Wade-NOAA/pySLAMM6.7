@@ -1,3 +1,31 @@
+"""
+This module performs sensitivity analysis for the SLAMM 6 Model.
+Functions:
+    sens_run(ss: TSLAMM_Simulation):
+        Executes the sensitivity analysis run for the given SLAMM simulation instance.
+    verify_setup(ss: TSLAMM_Simulation) -> bool:
+        Verifies the setup for sensitivity runs to ensure it meets the required conditions.
+Helper Functions within sens_run:
+    write_outputs(out_f: int, is_determ: bool):
+        Writes the output values to the CSV files.
+    create_csv_files():
+        Creates and initializes the CSV files for storing sensitivity analysis results.
+    save_param_names():
+        Saves the parameter names to the output text file.
+    init_text_results() -> bool:
+        Initializes the text results file for logging the sensitivity analysis process.
+    count_num_tests():
+        Counts the total number of sensitivity tests to be performed.
+    write_sensitivity_results():
+        Writes the results of the sensitivity tests to the CSV and text files.
+    calc_sens_parameters():
+        Calculates the sensitivity parameters based on the percentage to vary.
+    restore_vals():
+        Restores the original values of the sensitivity parameters after testing.
+    close_csv_files():
+        Closes all the CSV files to ensure data is saved properly.
+"""
+
 import datetime
 from SLR6 import TSLAMM_Simulation
 from app_global import *

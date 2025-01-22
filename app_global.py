@@ -6,6 +6,101 @@ from shapely.geometry import Polygon, Point
 import numpy as np
 from math import sqrt
 
+""" 
+This module defines various classes, constants, and functions used in the pySLAMM application.
+Classes:
+    ESLAMMError: Custom exception class for SLAMM errors.
+    SAVParamsRec: Class representing SAV parameters.
+    WaveDirection: Enum representing wave directions.
+    ElevUnit: Enum representing elevation units.
+    ElevCategory: Enum representing elevation categories.
+    AccrModels: Enum representing accretion models.
+    ErosionInputs: Enum representing erosion inputs.
+    AggCategories: Enum representing aggregate categories.
+    ClassElev: Dataclass representing elevation class.
+    DPoint: Class representing a point with x and y coordinates.
+    DLine: Class representing a line defined by two points.
+    TPolygon: Class representing a polygon with various methods for spatial operations.
+    TRectangle: Dataclass representing a rectangle with coordinates.
+    TOutputSite2: Dataclass representing an output site with polygon and rectangle.
+    TSubSite: Dataclass representing a subsite with various attributes.
+    TSite: Dataclass representing a site with subsites and output sites.
+    StatRecord: Dataclass representing statistical records.
+    TElevStats: Dataclass representing elevation statistics.
+    TSalinityRule: Dataclass representing a salinity rule.
+    TSalinityRules: Dataclass representing a collection of salinity rules.
+    IPCCScenarios: Enum representing IPCC scenarios.
+    IPCCEstimates: Enum representing IPCC estimates.
+    TSalStats: Dataclass representing salinity statistics.
+    TSRecord: Dataclass representing a time series record.
+    TSRArray: Class representing an array of time series records.
+    TFWFlow: Dataclass representing freshwater flow with various attributes.
+    TTimeSerSLR: Dataclass representing time series sea level rise.
+    DikeInfoRec: Dataclass representing dike information.
+    ProtectScenario: Enum representing protection scenarios.
+    FractalRecord: Dataclass representing fractal records.
+Functions:
+    create_str_vector(max_size: int) -> List[str]: Creates a list of strings with a specified maximum size.
+    check_name(expected_name, file): Checks if the expected name matches the name read from the file.
+    ts_write(file, name, value): Writes a name-value pair to the file.
+    ts_read(file, name, dtype): Reads a value of the specified data type from the file.
+    ts_read_write(file, name, value, dtype, is_reading): Reads or writes a value based on the is_reading flag.
+    split_file(main_file, split_file_name, is_reading): Splits the main file into a separate file for reading or writing.
+    revert_file(current_file, main_file): Reverts to the main file if the current file is different.
+    distance_pt_2_line(ln: DLine, p: DPoint) -> float: Calculates the distance from a point to a line.
+    distance_pt_2_line_km(ln: DLine, p: DPoint, scale: float) -> float: Calculates the distance from a point to a line in kilometers.
+    cross_line(p1: DPoint, p2: DPoint, ln: DLine) -> bool: Checks if a line connecting two points crosses another line.
+    distance_2pts_km(p1: DPoint, p2: DPoint, scale: float) -> float: Calculates the distance between two points in kilometers.
+    linear_interpolate(old_val, new_val, old_time, new_time, interp_time, extrapolate=False): Interpolates a value between two points in time.
+    init_cell(): Initializes a compressed cell with default values.
+    translate_inund_num(inund_in): Translates an inundation number into an alternative integer output for rasters.
+Constants:
+    VERSION_NUM: Version number of the application.
+    VERS_STR: Version string of the application.
+    BUILD_STR: Build string of the application.
+    FEET_PER_METER: Conversion factor from meters to feet.
+    USE_DATAELEV: Flag indicating whether to use data elevation.
+    MTL: Mean tidal level as datum.
+    ELEV_CUTOFF: Elevation cutoff for modeling.
+    SMALL: Small area threshold in square meters.
+    TINY: Tiny value threshold.
+    OUTPUT_MAXC: Maximum output constant.
+    MAX_ROAD_ARRAY: Maximum road array size.
+    MAX_CATS: Maximum categories.
+    NUM_ROWS_ACCR: Number of accretion parameters for each model.
+    SALT_WATER: Salt water category.
+    EXPOSED_WATER: Exposed water category.
+    MOSTLY_WATER: Mostly water category.
+    HAS_EFSW: Estuarine forested/shrub wetland category.
+    BLANK: Blank value.
+    NO_DATA: No data value.
+    N_WIND_DIRECTIONS: Number of wind directions.
+    N_WIND_SPEEDS: Number of wind speeds.
+    WIND_DIRECTIONS: Tuple of wind direction strings.
+    WIND_DEGREES: Tuple of wind direction degrees.
+    N_ACCR_MODELS: Number of accretion models.
+    ACCR_NAMES: List of accretion model names.
+    use_accr_var: List of flags indicating use of accretion variables.
+    accr_var: List of accretion variable values.
+    accr_notes: List of accretion notes.
+    HIST_WIDTH: Histogram width.
+    SAL_HIST_WIDTH: Salinity histogram width.
+    SLICE_INCREMENT: Slice increment value.
+    NUM_SAL_METRICS: Number of salinity metrics.
+    N_FTABLE: Number of FTable entries.
+    BLOCKEXP: Block exponent value.
+    BLOCKSIZE: Block size value.
+    BLOCKMASK: Block mask value.
+    max_hist: Maximum histogram value.
+    LabelIPCC: Dictionary mapping IPCC scenarios to labels.
+    LabelIPCCEst: Dictionary mapping IPCC estimates to labels.
+    LabelFixed: Dictionary mapping fixed labels.
+    LabelProtect: Dictionary mapping protection scenarios to labels.
+    NUM_CAT_COMPRESS: Number of categories to compress.
+"""
+
+
+
 
 # Constants
 VERSION_NUM = 6.991  # used for file reading and writing, 6.9905 threshold

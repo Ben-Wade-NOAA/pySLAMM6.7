@@ -1,6 +1,22 @@
 # import numpy as np
 # from dataclasses import dataclass, field
 # from numba import jit
+
+
+"""
+This module contains classes and functions for managing shared memory arrays, 
+shared data structures, and multiprocessing tasks for a SLAMM (Sea Level Affecting Marshes Model) simulation.
+Classes:
+    SharedMemoryArray: Manages shared memory arrays for multiprocessing.
+    SharedData: Manages shared data structures used by threads or the main process.
+    SumData: Data class for storing summary output.
+    TSLAMM_Simulation: Primary SLAMM simulation object.
+Functions:
+    jit_get_bit: Get the state of a bit in the b_matrix.
+    worker_function: Worker function for multiprocessing tasks.
+"""
+
+
 import sys
 import traceback
 import pickle

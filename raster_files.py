@@ -1,3 +1,25 @@
+"""
+This module provides classes and functions for handling raster files in different formats (ASCII, Binary, GeoTIFF).
+It includes functionality for reading and writing raster data, as well as handling metadata and file headers.
+Classes:
+    FileFormat(Enum): Enum class for specifying file formats (ASCII, BINARY, GEOTIFF).
+    TSLAMMFile: Base dataclass for SLAMM file handling, including metadata and file properties.
+    TSLAMMInputFile(TSLAMMFile): Class for reading SLAMM input files in various formats.
+    TSLAMMOutputFile(TSLAMMFile): Class for writing SLAMM output files in various formats.
+Functions:
+    TSLAMMInputFile.__init__(self, filen: str): Initializes the TSLAMMInputFile object based on the file extension.
+    TSLAMMInputFile.load_next_chunk(self): Loads the next chunk of data from a GeoTIFF file.
+    TSLAMMInputFile.prepare_file_for_reading(self): Prepares the file for reading based on its format.
+    TSLAMMInputFile.get_next_number(self): Retrieves the next number from the file, handling no-data values.
+    TSLAMMInputFile.close_file(self): Closes the file stream based on its format.
+    TSLAMMOutputFile.__init__(self, nc, nr, xll, yll, sz, fn, fformat): Initializes the TSLAMMOutputFile object with metadata.
+    TSLAMMOutputFile.write_header(self, prompt=False): Writes the header for the output file based on its format.
+    TSLAMMOutputFile.cr(self): Writes a newline character to the ASCII file.
+    TSLAMMOutputFile.write_next_number(self, num, last_number): Writes the next number to the output file, handling chunking for GeoTIFF.
+Constants:
+    NO_DATA: Default no-data value for raster files.
+    BLANK: Default value for blank cells in raster files.
+"""
 import numpy as np
 import rasterio
 from rasterio.windows import Window

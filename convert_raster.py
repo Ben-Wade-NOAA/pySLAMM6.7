@@ -5,6 +5,31 @@ from typing import Optional
 import numpy as np
 from raster_files import TSLAMMInputFile, TSLAMMOutputFile, FileFormat 
 
+
+"""
+This script converts raster files from one format to another.
+Supported input and output formats:
+- ASCII (.asc, .txt)
+- Binary (.slb)
+- GeoTIFF (.tif, .tiff)
+Functions:
+    determine_file_format(file_path: str) -> Optional[FileFormat]:
+        Determine the file format based on file extension.
+    prompt_overwrite(file_path: str) -> bool:
+        Prompt the user to confirm overwriting an existing file.
+    main(input_file: str, output_file: str):
+        Main function to handle the conversion process.
+Usage:
+    python convert_raster.py input_file output_file
+Arguments:
+    input_file: Path to the input raster file.
+    output_file: Path to the output raster file.
+Example:
+    python convert_raster.py input.asc output.tif
+"""
+
+
+
 def determine_file_format(file_path: str) -> Optional[FileFormat]:
     """Determine the file format based on file extension."""
     ext = Path(file_path).suffix.lower()
